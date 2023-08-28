@@ -3,7 +3,7 @@ import knex from "knex";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
-import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems } from "./helpers.js";
+import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems, calculateOwners } from "./helpers.js";
 const PORT = 3500;
 
 const watchlist = [
@@ -125,13 +125,13 @@ app.post("/login", (req, res) => {
 })
 
 app.post("/register", (req, res) => {
-    const {username, email, password, confirmation} = req.body;
-    if (!username || !email || !password || !confirmation || password !== confirmation) {
+    const {username, password, confirmation} = req.body;
+    if (!username || !password || !confirmation || password !== confirmation) {
       return sendError(res, 400, "Invalid username or password")
     }
     hashPassword(password, bcrypt)
     .then((hash) => {
-      registerUser(username, email, hash, db, req, res);
+      registerUser(username, hash, db, req, res);
     })
     .catch((error) => {
       return sendError(res, 500, "Error hashing password")
@@ -157,8 +157,8 @@ app.get("/collection/:collectionSlug/:startToken?", (req, res) => {
     return resp.json();
   })
   .then(data => {
-    const lightweight_data = parseCollectionData(data.nfts)
-    res.json(lightweight_data)
+    parseCollectionData(data.nfts, API_KEY)
+    .then(lightweight_data => res.json(lightweight_data))
   })
   .catch(error => {
       console.error("Error searching collection:", error);
@@ -200,7 +200,7 @@ app.post("/fetch-watchlist", (req, res) => {
   .from("watchlist")
   .where("username", username)
   .then(data => {
-    if (data && data[0].collections) {
+    if (data && data[0] && data[0].collections) {
       parseWatchlistItems(data[0].collections, API_KEY)
       .then(lightweight_data => res.json(lightweight_data))
     } else {
