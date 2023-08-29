@@ -3,7 +3,7 @@ import knex from "knex";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
-import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems, calculateOwners } from "./helpers.js";
+import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems, calculateOwners, isCollectionInWatchlist } from "./helpers.js";
 const PORT = 3500;
 
 const watchlist = [
@@ -207,6 +207,13 @@ app.post("/fetch-watchlist", (req, res) => {
       res.json("watchlist_empty")
     }
   })
+})
+
+app.post("/is-collection-in-watchlist", async (req, res) => {
+  const API_KEY = "GPgRRtpefy6USm7WE1Zfa1B0o0wO2y-7";
+  const {username, collection_address} = req.body;
+  const collectionInWatchlist = await isCollectionInWatchlist(collection_address, username, db, res)
+  res.json(collectionInWatchlist)
 })
 
 app.get("/fetch-collections", (req, res) => {

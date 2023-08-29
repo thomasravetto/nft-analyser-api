@@ -205,4 +205,4 @@ const calculateOwners = async (collection, API_KEY) => {
 
 }
 
-export {hashPassword, sendError, registerUser, loginUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems, calculateOwners};
+export {hashPassword, sendError, registerUser, loginUser, parseCollectionData, parseItemData, addCollectionToWatchlist,isCollectionInWatchlist, parseWatchlistItems, calculateOwners};
