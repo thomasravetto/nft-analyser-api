@@ -3,7 +3,7 @@ import knex from "knex";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
-import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, parseWatchlistItems, calculateOwners, isCollectionInWatchlist } from "./helpers.js";
+import { hashPassword, sendError, loginUser, registerUser, parseCollectionData, parseItemData, addCollectionToWatchlist, removeCollectionFromWatchlist, parseWatchlistItems, calculateOwners, isCollectionInWatchlist } from "./helpers.js";
 const PORT = 3500;
 
 const watchlist = [
@@ -141,6 +141,7 @@ app.post("/register", (req, res) => {
 app.get("/collection/:collectionSlug/:startToken?", (req, res) => {
   const {collectionSlug} = req.params;
   let {startToken} = req.params;
+  console.log(collectionSlug, startToken)
   const API_KEY = "GPgRRtpefy6USm7WE1Zfa1B0o0wO2y-7";
   const withMetadata = true;
   const NFTlimit = 20;
@@ -191,6 +192,11 @@ app.get("/:collectionHash/:tokenId", (req, res) => {
 app.post("/add-to-watchlist", (req, res) => {
   const {collection, username} = req.body;
   addCollectionToWatchlist(collection, username, db, res)
+})
+
+app.delete("/remove-from-watchlist", (req, res) => {
+  const {collection, username} = req.body;
+  removeCollectionFromWatchlist(collection, username, db, res)
 })
 
 app.post("/fetch-watchlist", (req, res) => {

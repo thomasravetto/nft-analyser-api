@@ -191,6 +191,21 @@ const addCollectionToWatchlist = async (collection, username, db, res) => {
     }
 }
 
+const removeCollectionFromWatchlist = async (collection, username, db, res) => {
+    try {
+        await db('watchlist')
+        .where('username', username)
+        .update({
+            collections: db.raw(`ARRAY_REMOVE(collections, ?)`, [collection])
+        })
+
+        res.json("Collection removed succesfully")
+    } catch (error) {
+        sendError(res, 500, "Error removing data");
+        console.error('Error removing data:', error);
+    }
+}
+
 const calculateOwners = async (collection, API_KEY) => {
     let count = 0;
     try {
@@ -205,4 +220,4 @@ const calculateOwners = async (collection, API_KEY) => {
 
 }
 
-export {hashPassword, sendError, registerUser, loginUser, parseCollectionData, parseItemData, addCollectionToWatchlist,isCollectionInWatchlist, parseWatchlistItems, calculateOwners};
+export {hashPassword, sendError, registerUser, loginUser, parseCollectionData, parseItemData, addCollectionToWatchlist, removeCollectionFromWatchlist, isCollectionInWatchlist, parseWatchlistItems, calculateOwners};
