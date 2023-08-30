@@ -141,7 +141,6 @@ app.post("/register", (req, res) => {
 app.get("/collection/:collectionSlug/:startToken?", (req, res) => {
   const {collectionSlug} = req.params;
   let {startToken} = req.params;
-  console.log(collectionSlug, startToken)
   const API_KEY = "GPgRRtpefy6USm7WE1Zfa1B0o0wO2y-7";
   const withMetadata = true;
   const NFTlimit = 20;
