@@ -117,7 +117,6 @@ const db = knex({
     }
   });
 
-console.log("ciao")
 
 // Index page returns simple json
 app.get("/", (req, res) => {
