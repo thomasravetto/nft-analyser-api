@@ -104,7 +104,6 @@ const API_KEY = process.env.API_KEY
 
 const app = express()
 app.use(json())
-console.log("ciao")
 app.use(cors())
 
 const db = knex({
